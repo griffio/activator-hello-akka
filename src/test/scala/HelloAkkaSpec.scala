@@ -1,6 +1,8 @@
-import org.scalatest.{ BeforeAndAfterAll, FlatSpecLike, Matchers }
-import akka.actor.{ Actor, Props, ActorSystem }
-import akka.testkit.{ ImplicitSender, TestKit, TestActorRef }
+import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
+
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class HelloAkkaSpec(_system: ActorSystem)
@@ -12,9 +14,10 @@ class HelloAkkaSpec(_system: ActorSystem)
 
   def this() = this(ActorSystem("HelloAkkaSpec"))
 
+  val timeout: Duration = 10.seconds
+
   override def afterAll: Unit = {
-    system.shutdown()
-    system.awaitTermination(10.seconds)
+    Await.result(system.terminate(), timeout)
   }
 
   "An HelloAkkaActor" should "be able to set a new greeting" in {
